@@ -1,0 +1,39 @@
+ID: roadmap
+_schema-version: '2.1'
+description: Roadmap with React and NodeJs
+version: 0.0.1
+modules:
+  - name: roadmap-db
+    type: hdb
+    path: db
+    parameters:
+      memory: 256M
+      disk-quota: 256M
+    requires:
+      - name: hanadbtrial
+  - name: roadmap-srv
+    type: nodejs
+    path: srv
+    parameters:
+      memory: 512M
+      disk-quota: 256M
+    provides:
+      - name: srv_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: hanadbtrial
+      - name: roadmap-uaa
+resources:
+  - name: hanadbtrial
+    type: org.cloudfoundry.existing-service
+    properties:
+      hdi-container-name: '${service-name}'
+  - name: roadmap-uaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: application
+      service: xsuaa
+      config:
+        xsappname: 'roadmap-${space}'
+        tenant-mode: dedicated
